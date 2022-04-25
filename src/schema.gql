@@ -5,8 +5,6 @@
 type Pet {
   id: Int!
   name: String!
-  type: String
-  ownerId: Int!
   owner: Owner!
 }
 
@@ -15,12 +13,20 @@ type Owner {
   name: String!
   email: String!
   password: String!
+  role: String!
   pets: [Pet!]
 }
 
 type LoginResponse {
   access_token: String!
   refresh_token: String!
+}
+
+type Product {
+  id: Int!
+  title: String!
+  description: String!
+  price: Float!
 }
 
 type Query {
@@ -30,6 +36,9 @@ type Query {
   owner(id: Int!): Owner!
   ownerByEmail(email: String!): Owner!
   token(token: String!): Owner!
+  getAllOwner: [Owner!]!
+  products: [Product!]!
+  product(id: Int!): Product!
 }
 
 type Mutation {
@@ -39,6 +48,9 @@ type Mutation {
   removeOwner(id: Int!): Owner!
   login(loginOwnerInput: LoginOwnerInput!): LoginResponse!
   signup(signinOwnerInput: CreateOwnerInput!): Owner!
+  createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(updateProductInput: UpdateProductInput!): Product!
+  removeProduct(id: Int!): Product!
 }
 
 input CreatePetDto {
@@ -63,4 +75,17 @@ input UpdateOwnerInput {
 input LoginOwnerInput {
   email: String!
   password: String!
+}
+
+input CreateProductInput {
+  title: String!
+  description: String!
+  price: Float!
+}
+
+input UpdateProductInput {
+  title: String
+  description: String
+  price: Float
+  id: Int!
 }

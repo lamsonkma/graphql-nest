@@ -8,6 +8,6 @@ export class CreatePetDto {
   name: string;
   @Field({ nullable: true })
   type?: string;
-  @Field((type) => Int)
+  @Field(() => Int)
   ownerId: number;
 }

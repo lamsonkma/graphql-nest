@@ -1,21 +1,19 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsEmail, IsString } from 'class-validator';
+import { IsString, IsNumber } from 'class-validator';
 import { Column } from 'typeorm';
 
 @InputType()
-export class CreateOwnerInput {
+export class CreateProductInput {
   @Column()
   @Field()
   @IsString()
-  name: string;
-
+  title: string;
   @Column()
-  @IsEmail()
   @Field()
-  email: string;
-
-  @Column()
   @IsString()
+  description: string;
+  @Column()
   @Field()
-  password: string;
+  @IsNumber()
+  price: number;
 }

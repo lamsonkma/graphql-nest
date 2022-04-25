@@ -7,11 +7,17 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 @Entity()
 @ObjectType()
 export class Owner {
   @PrimaryGeneratedColumn()
-  @Field((type) => Int)
+  @Field(() => Int)
   id: number;
   @Column()
   @Field()
@@ -23,7 +29,12 @@ export class Owner {
   @Column()
   @Field()
   password: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  @Field()
+  role: UserRole;
+
   @OneToMany(() => Pet, (pet) => pet.owner)
-  @Field((type) => [Pet], { nullable: true })
+  @Field(() => [Pet], { nullable: true })
   pets?: Pet[];
 }

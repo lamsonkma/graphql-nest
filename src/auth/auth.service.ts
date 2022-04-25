@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { CreateOwnerInput } from 'src/owners/dto/create-owner.input';
 import { Owner } from 'src/owners/entities/owner.entity';
 import { OwnersService } from 'src/owners/owners.service';
-import { ConfigService } from '@nestjs/config';
+
 import { PayloadDto } from './dto/payload-dto';
 import { randomBytes, scrypt as _scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -56,20 +56,27 @@ export class AuthService {
     }
   }
 
-  async verify(token: string) {
-    const decoded = await this.jwtService.verify(token, {
-      secret: 'lamsonkma',
-    });
-    const owner = await this.ownerService.findByEmail(decoded.email);
-    if (!owner) {
-      throw new Error('Unable to get the owner from decoded token.');
-    }
+  async getAllOwner() {
+    return this.ownerService.findAll();
+  }
 
-    return owner;
+  async verify(token: string) {
+    try {
+      const decoded = await this.jwtService.verify(token, {
+        secret: 'lamsonkma',
+      });
+      const owner = await this.ownerService.findByEmail(decoded.email);
+      if (!owner) {
+        throw new Error('Unable to get the owner from decoded token.');
+      }
+      return owner;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async accessToken(payload: PayloadDto) {
-    const accessToken = await this.jwtService.sign(
+    const accessToken = this.jwtService.sign(
       {
         email: payload.email,
         name: payload.name,
@@ -82,7 +89,7 @@ export class AuthService {
     return accessToken;
   }
   async refreshToken(payload: PayloadDto) {
-    const refreshToken = await this.jwtService.sign(
+    const refreshToken = this.jwtService.sign(
       {
         email: payload.email,
         name: payload.name,

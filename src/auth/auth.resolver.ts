@@ -3,11 +3,10 @@ import { AuthService } from './auth.service';
 
 import { LoginResponse } from './dto/login-response';
 import { LoginOwnerInput } from './dto/login-auth.input';
-import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
 import { Owner } from 'src/owners/entities/owner.entity';
 import { CreateOwnerInput } from 'src/owners/dto/create-owner.input';
-import { JwtAuthGuard } from './guard/jwt-auth-guard';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from './guard/gql-auth.guard';
 
 @Resolver()
 export class AuthResolver {
@@ -23,9 +22,13 @@ export class AuthResolver {
     return this.authService.signup(signinOwnerInput);
   }
 
-  @UseGuards(GqlAuthGuard)
   @Query(() => Owner, { name: 'token' })
   verifyToken(@Args('token') token: string) {
     return this.authService.verify(token);
+  }
+
+  @Query(() => [Owner], { name: 'getAllOwner' })
+  getAllOwner() {
+    return this.authService.getAllOwner();
   }
 }

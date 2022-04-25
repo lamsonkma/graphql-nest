@@ -31,6 +31,6 @@ export class PetResolver {
   }
   @ResolveField((returns) => Owner)
   owner(@Parent() pet: Pet) {
-    return this.petService.getOwner(pet.ownerId);
+    return this.petService.getOwner(pet.owner.id);
   }
 }

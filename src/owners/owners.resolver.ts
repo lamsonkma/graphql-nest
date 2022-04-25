@@ -1,12 +1,16 @@
 import { Resolver, Query, Mutation, Args, Int, Context } from '@nestjs/graphql';
 import { OwnersService } from './owners.service';
-import { Owner } from './entities/owner.entity';
+import { Owner, UserRole } from './entities/owner.entity';
 import { CreateOwnerInput } from './dto/create-owner.input';
 import { UpdateOwnerInput } from './dto/update-owner.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guard/gql-auth.guard';
 import { CurrentOwner } from 'src/decorator/current-owner.decorator';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth-guard';
+import { LocalAuthGuard } from 'src/auth/guard/local-auth-guard';
+import { JwtStrategy, LocalStrategy } from 'src/auth/strategies';
+import { RolesGuard } from 'src/auth/guard/role.guard';
+import { Roles } from 'src/decorator/roles.decorator';
 
 @Resolver(() => Owner)
 export class OwnersResolver {
@@ -23,6 +27,8 @@ export class OwnersResolver {
   }
 
   @Query(() => Owner, { name: 'owner' })
+  @UseGuards(GqlAuthGuard, RolesGuard)
+  @Roles(UserRole.USER)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.ownersService.findOne(id);
   }

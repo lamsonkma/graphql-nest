@@ -5,11 +5,18 @@ import { OwnersModule } from 'src/owners/owners.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { LocalStrategy } from './strategies/local.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigModule } from '@nestjs/config';
+import { GqlAuthGuard } from './guard/gql-auth.guard';
+import { LocalStrategy } from './strategies';
 @Module({
-  providers: [AuthService, AuthResolver, JwtStrategy],
+  providers: [
+    AuthService,
+    AuthResolver,
+    JwtStrategy,
+    GqlAuthGuard,
+    LocalStrategy,
+  ],
   exports: [AuthService],
   controllers: [AuthController],
   imports: [

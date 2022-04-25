@@ -9,11 +9,11 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super();
   }
-  validate(email: string, password: string) {
-    const owner = this.authService.valdateOwner(email, password);
+  async validate(email: string, password: string) {
+    const owner = await this.authService.valdateOwner(email, password);
     if (!owner) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Not Found User');
     }
-    return owner;
+    return this.authService.signin(owner);
   }
 }

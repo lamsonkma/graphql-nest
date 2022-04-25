@@ -1,9 +1,11 @@
+import { InjectQueue } from '@nestjs/bull';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
 import { Repository } from 'typeorm';
 import { CreateOwnerInput } from './dto/create-owner.input';
 import { UpdateOwnerInput } from './dto/update-owner.input';
@@ -12,7 +14,7 @@ import { Owner } from './entities/owner.entity';
 @Injectable()
 export class OwnersService {
   constructor(
-    @InjectRepository(Owner) private ownerRepository: Repository<Owner>,
+    @InjectRepository(Owner) private ownerRepository: Repository<Owner>, // @InjectQueue('owner') private ownerQueue: Queue,
   ) {}
   async create(createOwnerInput: CreateOwnerInput) {
     const owner = await this.ownerRepository.findOne({
@@ -26,12 +28,16 @@ export class OwnersService {
     }
   }
 
-  findAll() {
-    return this.ownerRepository.find();
+  async findAll() {
+    return await this.ownerRepository.find();
   }
 
-  findOne(id: number) {
-    return this.ownerRepository.findOne(id);
+  async findOne(id: number) {
+    const owner = await this.ownerRepository.findOne(id);
+    if (!owner) {
+      throw new NotFoundException('Owner not found');
+    }
+    return owner;
   }
 
   async findByEmail(email: string) {
